@@ -3,7 +3,7 @@ name: Build APK
 on:
   push:
     branches:
-      - main
+      - main  
 
 jobs:
   build:
@@ -13,7 +13,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Set up Python
+    - name: Set up Python 3.8
       uses: actions/setup-python@v5
       with:
         python-version: '3.8'
@@ -21,16 +21,15 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y python3-pip python3-setuptools python3-virtualenv git zip unzip openjdk-8-jdk
+        sudo apt-get install -y \
+          python3-pip python3-setuptools python3-virtualenv \
+          git zip unzip openjdk-8-jdk \
+          zlib1g-dev libncurses5-dev libncursesw5-dev libssl-dev
 
-    - name: Install Buildozer
+    - name: Install Buildozer and Cython
       run: |
         python3 -m pip install --upgrade pip
-        python3 -m pip install buildozer
-
-    - name: Install Cython
-      run: |
-        python3 -m pip install cython
+        python3 -m pip install buildozer cython
 
     - name: Initialize Buildozer
       run: |
@@ -44,7 +43,7 @@ jobs:
         echo "package.domain = org.example" >> buildozer.spec
         echo "source.include_exts = py,png,jpg,kv,atlas,json" >> buildozer.spec
         echo "source.include_patterns = assets/*,images/*,fonts/*" >> buildozer.spec
-        echo "requirements = python3,kivy,kivymd,firebase_admin,pyjnius,openssl" >> buildozer.spec
+        echo "requirements = python3,kivy==2.1.0,kivymd,pyjnius,openssl" >> buildozer.spec
         echo "android.permissions = INTERNET" >> buildozer.spec
         echo "android.api = 30" >> buildozer.spec
         echo "android.minapi = 21" >> buildozer.spec
