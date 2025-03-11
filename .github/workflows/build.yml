@@ -3,7 +3,7 @@ name: Build APK
 on:
   push:
     branches:
-      - main  
+      - main 
 
 jobs:
   build:
@@ -53,6 +53,13 @@ jobs:
         echo "android.sdk = 26" >> buildozer.spec
         echo "android.arch = armeabi-v7a" >> buildozer.spec
         echo "p4a.branch = stable" >> buildozer.spec
+
+    - name: Install Android SDK and Build Tools
+      run: |
+        mkdir -p ~/.android
+        touch ~/.android/repositories.cfg
+        yes | sdkmanager --licenses
+        sdkmanager "build-tools;30.0.3" "platform-tools" "platforms;android-30"
 
     - name: Build APK
       run: |
