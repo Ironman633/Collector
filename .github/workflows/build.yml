@@ -71,6 +71,10 @@ jobs:
         echo "export PATH=$PATH:~/android-sdk/cmdline-tools/latest/bin" >> ~/.bashrc
         source ~/.bashrc
 
+    - name: Verify sdkmanager Installation
+      run: |
+        which sdkmanager || { echo "sdkmanager not found in PATH"; exit 1; }
+
     - name: Install Android SDK and Build Tools
       run: |
         yes | sdkmanager --licenses
