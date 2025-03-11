@@ -3,7 +3,7 @@ name: Build APK
 on:
   push:
     branches:
-      - main 
+      - main  
 
 jobs:
   build:
@@ -54,10 +54,20 @@ jobs:
         echo "android.arch = armeabi-v7a" >> buildozer.spec
         echo "p4a.branch = stable" >> buildozer.spec
 
-    - name: Install Android SDK and Build Tools
+    - name: Download and Install Android SDK Command-Line Tools
       run: |
         mkdir -p ~/.android
         touch ~/.android/repositories.cfg
+        wget https://dl.google.com/android/repository/commandlinetools-linux-6609375_latest.zip -O /tmp/commandlinetools.zip
+        mkdir -p ~/android-sdk/cmdline-tools
+        unzip /tmp/commandlinetools.zip -d ~/android-sdk/cmdline-tools
+        mv ~/android-sdk/cmdline-tools/cmdline-tools ~/android-sdk/cmdline-tools/latest
+        echo "export ANDROID_SDK_ROOT=~/android-sdk" >> ~/.bashrc
+        echo "export PATH=$PATH:~/android-sdk/cmdline-tools/latest/bin" >> ~/.bashrc
+        source ~/.bashrc
+
+    - name: Install Android SDK and Build Tools
+      run: |
         yes | sdkmanager --licenses
         sdkmanager "build-tools;30.0.3" "platform-tools" "platforms;android-30"
 
