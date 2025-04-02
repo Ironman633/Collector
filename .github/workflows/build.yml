@@ -3,7 +3,7 @@ name: Build KivyMD APK
 on:
   push:
     branches:
-      - main  
+      - main  # Change if your branch name is different
 
 jobs:
   build:
@@ -28,7 +28,6 @@ jobs:
       - name: Install Buildozer
         run: |
           pip install buildozer
-          buildozer init  # Ensures buildozer.spec exists
 
       - name: Build APK
         run: buildozer -v android debug
