@@ -14,6 +14,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Create bin directory (for APK output)
+        run: mkdir -p bin  # Ensures the bin folder exists
+
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
