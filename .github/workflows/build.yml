@@ -3,8 +3,8 @@ name: Build KivyMD APK
 on:
   push:
     branches:
-      - main  # Runs on push to the "main" branch
-  workflow_dispatch:  # Allows manual trigger
+      - main
+  workflow_dispatch:
 
 jobs:
   build:
@@ -12,39 +12,34 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4  # Updated to v4
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4  # Updated to v4
+        uses: actions/setup-python@v4
         with:
           python-version: '3.9'
 
       - name: Install Dependencies
         run: |
-          sudo apt update && sudo apt install -y zip unzip
+          sudo apt update && sudo apt install -y zip unzip libstdc++6
           python -m pip install --upgrade pip
-          pip install --upgrade buildozer cython virtualenv
+          pip install --upgrade buildozer cython virtualenv 
 
-      - name: Set up Android environment
+      - name: Set up Buildozer Environment
         run: |
-          echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
-          echo "ANDROID_NDK_HOME=$ANDROID_NDK" >> $GITHUB_ENV
-          echo "PATH=$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$PATH" >> $GITHUB_ENV
-
-      - name: Initialize Buildozer
-        run: |
-          if [ ! -f "buildozer.spec" ]; then
+          mkdir -p $HOME/.buildozer/android/platform
+          if [ ! -d ".buildozer" ]; then
             buildozer init
           fi
 
-      - name: Clean Previous Builds (Optional)
+      - name: Clean Previous Builds
         run: buildozer android clean
 
       - name: Build APK
-        run: buildozer -v android debug
+        run: buildozer -v android debug || (cat .buildozer/android/platform/build-*/logs/* || true)
 
       - name: Upload APK
-        uses: actions/upload-artifact@v4  # Fixed version
+        uses: actions/upload-artifact@v4
         with:
           name: KivyMD-APK
           path: bin/*.apk
