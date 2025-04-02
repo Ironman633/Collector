@@ -17,7 +17,6 @@ jobs:
       - name: Create bin directory (for APK output)
         run: mkdir -p bin  # Ensures the bin folder exists
 
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -41,12 +40,12 @@ jobs:
       - name: Fix missing directories
         run: mkdir -p .buildozer/android/platform/build-arm64-v8a/dists/
 
-
       - name: Clean Previous Builds
         run: buildozer android clean || true
 
       - name: Build APK
-        run: buildozer -v android debug || (cat .buildozer/android/platform/build-*/logs/* || true)
+        run: |
+          buildozer -v android debug || (cat .buildozer/android/platform/build-*/logs/* || true)
           echo "Checking for APK files..."
           find . -name "*.apk" -exec ls -lh {} \;
 
@@ -68,7 +67,6 @@ jobs:
         run: |
           echo "Debugging Buildozer Build"
           ls -R .buildozer/android/platform/build-arm64-v8a/dists/
-
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
