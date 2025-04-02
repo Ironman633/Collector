@@ -49,19 +49,6 @@ jobs:
           echo "Checking for APK files..."
           find . -name "*.apk" -exec ls -lh {} \;
 
-      - name: Locate and Move APK
-        run: |
-          # Find the generated APK and copy to bin/
-          APK_PATH=$(find . -path "./bin/*.apk" -o -path ".buildozer/android/platform/build-*/dists/*/bin/*.apk" | head -1)
-          if [ -n "$APK_PATH" ]; then
-            echo "Found APK at: $APK_PATH"
-            cp "$APK_PATH" bin/
-            ls -lh bin/
-          else
-            echo "ERROR: No APK file found!"
-            find . -name "*.apk" || true
-            exit 1
-          fi
 
       - name: Run Debug Command
         run: |
