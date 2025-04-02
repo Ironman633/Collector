@@ -3,7 +3,7 @@ name: Build KivyMD APK
 on:
   push:
     branches:
-      - main  # Runs the build when code is pushed to the "main" branch
+      - main  # Runs on push to the "main" branch
   workflow_dispatch:  # Allows manual trigger
 
 jobs:
@@ -12,10 +12,10 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4  # Updated to v4
 
       - name: Set up Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4  # Updated to v4
         with:
           python-version: '3.9'
 
@@ -24,7 +24,7 @@ jobs:
           sudo apt update && sudo apt install -y zip unzip
           python -m pip install --upgrade pip
           pip install --upgrade buildozer cython virtualenv
-      
+
       - name: Set up Android environment
         run: |
           echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
@@ -44,7 +44,7 @@ jobs:
         run: buildozer -v android debug
 
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4  # Fixed version
         with:
           name: KivyMD-APK
           path: bin/*.apk
