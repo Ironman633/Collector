@@ -1,36 +1,51 @@
 name: Build KivyMD APK
 
-on: [push, pull_request]  # Run on push & PR
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # Use Ubuntu for Buildozer
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4  # Ensure latest version
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: |
+          sudo apt update && sudo apt install -y zip unzip libstdc++6
           python -m pip install --upgrade pip
-          pip install buildozer cython virtualenv
+          pip install --upgrade buildozer cython virtualenv 
 
-      - name: Initialize Buildozer
+      - name: Set up Buildozer Environment
         run: |
+          mkdir -p $HOME/.buildozer/android/platform
           if [ ! -f "buildozer.spec" ]; then
             buildozer init
           fi
 
-      - name: Build APK
-        run: buildozer -v android debug
+      - name: Clean Previous Builds
+        run: buildozer android clean || true
 
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4  # Use v4 instead of v3
+      - name: Build APK
+        run: buildozer -v android debug || (cat .buildozer/android/platform/build-*/logs/* || true)
+
+      - name: Run Debug Command
+        run: |
+          echo "Debugging Buildozer Build"
+          ls -R .buildozer/android/platform/build-arm64-v8a/dists/
+
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
         with:
           name: KivyMD-APK
           path: bin/*.apk
