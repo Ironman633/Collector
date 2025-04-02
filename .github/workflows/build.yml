@@ -1,20 +1,40 @@
+name: Build KivyMD APK
+
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main  # Change this to your working branch
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-      - name: Build APK
-        uses: digreatbrian/buildozer-action@v2
-        with:
-          python-version: 3.11
-          buildozer-cmd: buildozer -v android debug
+    runs-on: ubuntu-latest
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
         with:
-          name: package
-          path: ./bin/*.apk
+          python-version: '3.9'
+
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y git zip unzip openjdk-17-jdk
+          pip install --upgrade pip
+          pip install Cython virtualenv
+
+      - name: Install Buildozer
+        run: |
+          pip install buildozer
+          buildozer init  # Ensures buildozer.spec exists
+
+      - name: Build APK
+        run: buildozer -v android debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: Built-APK
+          path: bin/*.apk
