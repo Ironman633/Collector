@@ -27,7 +27,6 @@ jobs:
           sudo apt update && sudo apt install -y zip unzip libstdc++6 build-essential cmake
           python -m pip install --upgrade pip
           pip install --upgrade buildozer cython virtualenv 
-
       - name: Set up Buildozer Environment
         run: |
           mkdir -p $HOME/.buildozer/android/platform
@@ -36,7 +35,6 @@ jobs:
           fi
           # Ensure Android SDK is accepted
           yes | $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
-
       - name: Fix missing directories
         run: mkdir -p .buildozer/android/platform/build-arm64-v8a/dists/
 
@@ -46,14 +44,8 @@ jobs:
       - name: Build APK
         run: |
           buildozer -v android debug || (cat .buildozer/android/platform/build-*/logs/* || true)
-
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: study-planner-apk
-          path: bin/*.apk
-
-
+          echo "Checking for APK files..."
+          find . -name "*.apk" -exec ls -lh {} \;
       - name: Run Debug Command
         run: |
           echo "Debugging Buildozer Build"
