@@ -46,8 +46,12 @@ jobs:
       - name: Build APK
         run: |
           buildozer -v android debug || (cat .buildozer/android/platform/build-*/logs/* || true)
-          echo "Checking for APK files..."
-          find . -name "*.apk" -exec ls -lh {} \;
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: study-planner-apk
+          path: bin/*.apk
 
 
       - name: Run Debug Command
